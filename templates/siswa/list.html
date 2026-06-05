@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Data Siswa{% endblock %}
+{% block page_title %}Data Siswa{% endblock %}
+{% block page_sub %}Kelola seluruh data siswa{% endblock %}
+{% block topbar_actions %}
+<div style="display:flex;gap:10px;">
+  <button onclick="window.open('/export/siswa','_blank')" class="btn btn-secondary">📄 Export PDF</button>
+  <a href="{{ url_for('tambah_siswa') }}" class="btn btn-primary">+ Tambah Siswa</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Daftar Siswa ({{ siswa_list|length }})</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>NIS</th>
+          <th>Nama Siswa</th>
+          <th>Kelas</th>
+          <th>Username</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in siswa_list %}
+        <tr>
+          <td><code style="color:var(--accent);font-size:12px;">{{ s.nis }}</code></td>
+          <td style="font-weight:600;">{{ s.nama_siswa }}</td>
+          <td><span class="badge badge-blue">{{ s.kelas }}</span></td>
+          <td style="color:var(--muted);">{{ s.username }}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <a href="{{ url_for('ubah_siswa', nis=s.nis) }}" class="btn btn-secondary btn-sm">✏️ Ubah</a>
+              <form method="POST" action="{{ url_for('hapus_siswa', nis=s.nis) }}"
+                    onsubmit="return confirm('Hapus siswa {{ s.nama_siswa }}?')">
+                <button type="submit" class="btn btn-danger btn-sm">🗑 Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px;">Belum ada data siswa.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Guru{% endblock %}
+{% block page_title %}{{ action }} Guru{% endblock %}
+{% block page_sub %}{% if action == 'Tambah' %}Daftarkan guru baru ke dalam sistem{% else %}Perbarui data guru{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:680px;">
+  <div class="card">
+    <div class="card-header" style="gap:10px;">
+      <span style="font-size:20px;">👨‍🏫</span>
+      <span class="card-title">Formulir Data Guru</span>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+
+        <!-- Row 1: Kode Guru + Mata Pelajaran -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kode Guru</label>
+            <input type="text" name="id_guru"
+                   value="{{ data.id_guru if data else '' }}"
+                   {% if action == 'Ubah' %}readonly{% endif %}
+                   placeholder="mis. GR001" required>
+            {% if action == 'Ubah' %}
+            <div class="form-hint">Kode tidak dapat diubah.</div>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label>Mata Pelajaran</label>
+            <select name="id_mapel">
+              <option value="">mis. Matematika</option>
+              {% for m in mapel_list %}
+              <option value="{{ m.id_mapel }}">{{ m.nama_mapel }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-hint">Opsional — untuk referensi pengampu.</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Nama Lengkap (full width) -->
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" name="nama_guru"
+                 value="{{ data.nama_guru if data else '' }}"
+                 placeholder="Nama lengkap guru" required>
+        </div>
+
+        <!-- Divider: Akun Login -->
+        <div style="display:flex;align-items:center;gap:10px;margin:24px 0 18px;">
+          <span style="font-size:14px;">🔒</span>
+          <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;">Akun Login</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+        </div>
+
+        <!-- Row 3: Username + Password -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username"
+                   value="{{ data.username if data else '' }}"
+                   placeholder="mis. guru_budi" required>
+          </div>
+          <div class="form-group">
+            <label>Password{% if action == 'Ubah' %} <span style="font-weight:400;text-transform:none;">(opsional)</span>{% endif %}</label>
+            <input type="password" name="password"
+                   placeholder="Min. 6 karakter"
+                   {% if action == 'Tambah' %}required{% endif %}>
+          </div>
+        </div>
+
+        <div class="form-actions" style="margin-top:28px;">
+          <button type="submit" class="btn btn-primary">
+            + {% if action == 'Tambah' %}Tambah Guru{% else %}Simpan Perubahan{% endif %}
+          </button>
+          <a href="{{ url_for('list_guru') }}" class="btn btn-secondary">Batal</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

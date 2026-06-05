@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block page_title %}Dashboard Admin{% endblock %}
+{% block page_sub %}Selamat datang, {{ session.username }}! Berikut ringkasan data sekolah.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ stats.total_siswa }}</div>
+        <div class="stat-label">Total Siswa</div>
+    </div>
+    <div class="stat-card purple">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-value">{{ stats.total_guru }}</div>
+        <div class="stat-label">Total Guru</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value">{{ stats.total_lulus }}</div>
+        <div class="stat-label">Siswa Lulus</div>
+    </div>
+    <div class="stat-card yellow">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value">{{ stats.total_nilai }}</div>
+        <div class="stat-label">Total Entri Nilai</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Menu Cepat</span>
+    </div>
+    <div class="card-body">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;">
+            <a href="{{ url_for('tambah_siswa') }}" class="btn btn-primary">👥 Tambah Siswa</a>
+            <a href="{{ url_for('tambah_guru') }}"  class="btn btn-secondary">🎓 Tambah Guru</a>
+            <a href="{{ url_for('list_nilai') }}"   class="btn btn-secondary">📋 Data Nilai</a>
+            <a href="{{ url_for('laporan') }}"       class="btn btn-secondary">📊 Laporan</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

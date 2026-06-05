@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Data Nilai{% endblock %}
+{% block page_title %}{% if session.role == 'Guru' %}Rekap Nilai Saya{% else %}Semua Data Nilai{% endif %}{% endblock %}
+{% block page_sub %}Daftar nilai siswa yang telah diinput{% endblock %}
+{% block topbar_actions %}
+<div style="display:flex;gap:10px;">
+  <button onclick="window.open('/export/nilai','_blank')" class="btn btn-secondary">📄 Export PDF</button>
+  {% if session.role == 'Guru' %}
+  <a href="{{ url_for('input_nilai') }}" class="btn btn-primary">+ Input Nilai</a>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Daftar Nilai ({{ nilai_list|length }} entri)</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Siswa</th>
+          <th>Kelas</th>
+          <th>Mata Pelajaran</th>
+          {% if session.role == 'Admin' %}<th>Guru</th>{% endif %}
+          <th>Tugas</th>
+          <th>UTS</th>
+          <th>UAS</th>
+          <th>Nilai Akhir</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in nilai_list %}
+        <tr>
+          <td style="font-weight:600;">{{ n.nama_siswa }}</td>
+          <td><span class="badge badge-blue">{{ n.kelas }}</span></td>
+          <td>{{ n.nama_mapel }}</td>
+          {% if session.role == 'Admin' %}<td style="color:var(--muted);">{{ n.nama_guru }}</td>{% endif %}
+          <td>{{ n.nilai_tugas }}</td>
+          <td>{{ n.nilai_uts }}</td>
+          <td>{{ n.nilai_uas }}</td>
+          <td style="font-weight:700;color:var(--accent);">{{ "%.1f"|format(n.nilai_akhir) }}</td>
+          <td>
+            <span class="badge {% if n.status_lulus == 'Lulus' %}badge-green{% else %}badge-red{% endif %}">
+              {{ n.status_lulus }}
+            </span>
+          </td>
+          <td>
+            <form method="POST" action="{{ url_for('hapus_nilai', id_nilai=n.id_nilai) }}"
+                  onsubmit="return confirm('Hapus nilai ini?')">
+              <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:32px;">Belum ada data nilai.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

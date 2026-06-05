@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Nilai — SiSchool</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: Arial, sans-serif; background:#fff; color:#1a1a2e; font-size:12px; }
+  .header { background: linear-gradient(135deg,#1e3a5f,#0ea5e9); color:#fff; padding:28px 32px; }
+  .header h1 { font-size:22px; font-weight:700; }
+  .header p  { font-size:12px; opacity:.8; margin-top:6px; }
+  .meta { display:flex; justify-content:space-between; padding:12px 32px; background:#f0f9ff; border-bottom:1px solid #bae6fd; font-size:12px; color:#555; }
+  .content { padding:20px 32px; }
+  .filter-info { background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:11px; color:#0369a1; }
+  .summary { display:flex; gap:12px; margin-bottom:18px; }
+  .sum-card { flex:1; background:#f0f9ff; border:1px solid #bae6fd; border-radius:10px; padding:12px 16px; text-align:center; }
+  .sum-card .val { font-size:22px; font-weight:700; color:#1e3a5f; }
+  .sum-card .lbl { font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  th { background:#1e3a5f; color:#fff; padding:9px 10px; text-align:left; font-size:10px; letter-spacing:.4px; text-transform:uppercase; }
+  td { padding:8px 10px; border-bottom:1px solid #e0f2fe; vertical-align:middle; }
+  tr:nth-child(even) td { background:#f0f9ff; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:700; }
+  .badge-lulus { background:#d1fae5; color:#065f46; }
+  .badge-gagal { background:#fee2e2; color:#991b1b; }
+  .badge-kelas { background:#dbeafe; color:#1e40af; }
+  .val-lulus { color:#059669; font-weight:700; }
+  .val-gagal { color:#dc2626; font-weight:700; }
+  .footer { margin-top:20px; text-align:right; font-size:11px; color:#999; border-top:1px solid #e0f2fe; padding-top:10px; }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:#0ea5e9; color:#fff; border:none; padding:12px 24px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px rgba(14,165,233,.3); }
+  @media print { .print-btn { display:none; } body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📊 Laporan Nilai Siswa — SiSchool</h1>
+  <p>Sistem Pengolahan Nilai Siswa</p>
+</div>
+<div class="meta">
+  <span>Total: <strong>{{ data|length }} entri</strong></span>
+  <span id="tgl"></span>
+</div>
+<div class="content">
+  {% if kelas_filter or mapel_filter or nama_filter %}
+  <div class="filter-info">
+    🔍 Filter aktif:
+    {% if nama_filter %} Nama: <strong>{{ nama_filter }}</strong>{% endif %}
+    {% if kelas_filter %} &bull; Kelas: <strong>{{ kelas_filter }}</strong>{% endif %}
+    {% if mapel_filter %} &bull; Mapel: <strong>{{ mapel_filter }}</strong>{% endif %}
+  </div>
+  {% endif %}
+
+  {% set lulus = data|selectattr('status_lulus','equalto','Lulus')|list|length %}
+  <div class="summary">
+    <div class="sum-card"><div class="val">{{ data|length }}</div><div class="lbl">Total Entri</div></div>
+    <div class="sum-card"><div class="val">{{ lulus }}</div><div class="lbl">Lulus</div></div>
+    <div class="sum-card"><div class="val">{{ data|length - lulus }}</div><div class="lbl">Tidak Lulus</div></div>
+    {% if data|length > 0 %}
+    <div class="sum-card">
+      <div class="val">{{ "%.0f"|format((lulus / data|length * 100)) }}%</div>
+      <div class="lbl">Tingkat Kelulusan</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th><th>NIS</th><th>Nama Siswa</th><th>Kelas</th>
+        <th>Mata Pelajaran</th><th>Guru</th>
+        <th>Tugas</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for n in data %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td style="font-family:monospace;font-size:10px;">{{ n.nis }}</td>
+        <td style="font-weight:600;">{{ n.nama_siswa }}</td>
+        <td><span class="badge badge-kelas">{{ n.kelas }}</span></td>
+        <td>{{ n.nama_mapel }}</td>
+        <td style="color:#666;">{{ n.nama_guru }}</td>
+        <td>{{ n.nilai_tugas }}</td>
+        <td>{{ n.nilai_uts }}</td>
+        <td>{{ n.nilai_uas }}</td>
+        <td class="{% if n.nilai_akhir >= 70 %}val-lulus{% else %}val-gagal{% endif %}">
+          {{ "%.1f"|format(n.nilai_akhir) }}
+        </td>
+        <td>
+          <span class="badge {% if n.status_lulus == 'Lulus' %}badge-lulus{% else %}badge-gagal{% endif %}">
+            {{ n.status_lulus }}
+          </span>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="11" style="text-align:center;padding:20px;color:#999;">Tidak ada data.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="footer">Dicetak melalui SiSchool &bull; <span id="tgl2"></span></div>
+</div>
+<button class="print-btn" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+<script>
+  const now = new Date().toLocaleString('id-ID',{dateStyle:'long',timeStyle:'short'});
+  document.getElementById('tgl').textContent = 'Dicetak: ' + now;
+  document.getElementById('tgl2').textContent = now;
+</script>
+</body>
+</html>

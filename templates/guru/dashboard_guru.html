@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Guru{% endblock %}
+{% block page_title %}Dashboard Guru{% endblock %}
+{% block page_sub %}Selamat datang, {{ session.username }}!{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-icon">✏️</div>
+        <div class="stat-value">{{ stats.total_input }}</div>
+        <div class="stat-label">Nilai Telah Diinput</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ stats.total_siswa }}</div>
+        <div class="stat-label">Total Siswa</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Aksi Cepat</span>
+    </div>
+    <div class="card-body" style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="{{ url_for('input_nilai') }}" class="btn btn-primary">✏️ Input Nilai Siswa</a>
+        <a href="{{ url_for('list_nilai') }}"  class="btn btn-secondary">📋 Rekap Nilai Saya</a>
+        <a href="{{ url_for('laporan') }}"      class="btn btn-secondary">📊 Laporan Nilai</a>
+    </div>
+</div>
+{% endblock %}

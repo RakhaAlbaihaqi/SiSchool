@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Input Nilai{% endblock %}
+{% block page_title %}Input Nilai Siswa{% endblock %}
+{% block page_sub %}Masukkan nilai Tugas, UTS, dan UAS siswa{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width:580px;">
+    <div class="card-header">
+        <span class="card-title">Form Input Nilai</span>
+        <span style="font-size:12px;color:var(--muted);">Rumus: 30% Tugas + 30% UTS + 40% UAS</span>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Pilih Siswa</label>
+                    <select name="nis" required>
+                        <option value="">-- Pilih Siswa --</option>
+                        {% for s in siswa_list %}
+                        <option value="{{ s.nis }}">{{ s.nama_siswa }} ({{ s.kelas }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mata Pelajaran</label>
+                    <select name="id_mapel" required>
+                        <option value="">-- Pilih Mapel --</option>
+                        {% for m in mapel_list %}
+                        <option value="{{ m.id_mapel }}">{{ m.nama_mapel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;">
+                <p style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;font-weight:600;">Komponen Nilai (0 - 100)</p>
+                <div class="form-grid">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Nilai Tugas <span style="color:var(--accent);">(30%)</span></label>
+                        <input type="number" name="nilai_tugas" min="0" max="100" step="0.01" placeholder="0 - 100" required id="nt">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Nilai UTS <span style="color:var(--accent);">(30%)</span></label>
+                        <input type="number" name="nilai_uts" min="0" max="100" step="0.01" placeholder="0 - 100" required id="nuts">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:16px;margin-bottom:0;">
+                    <label>Nilai UAS <span style="color:var(--accent);">(40%)</span></label>
+                    <input type="number" name="nilai_uas" min="0" max="100" step="0.01" placeholder="0 - 100" required id="nuas">
+                </div>
+            </div>
+            <!-- Preview Nilai Akhir -->
+            <div id="preview" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;text-align:center;">
+                <p style="font-size:12px;color:var(--muted);margin-bottom:4px;">ESTIMASI NILAI AKHIR</p>
+                <p id="preview-val" style="font-family:'DM Serif Display',serif;font-size:36px;color:var(--accent);"></p>
+                <p id="preview-status" style="font-size:13px;font-weight:600;margin-top:4px;"></p>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Simpan Nilai</button>
+                <a href="{{ url_for('list_nilai') }}" class="btn btn-secondary">✕ Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+function updatePreview() {
+    const t = parseFloat(document.getElementById('nt').value) || 0;
+    const u = parseFloat(document.getElementById('nuts').value) || 0;
+    const a = parseFloat(document.getElementById('nuas').value) || 0;
+    if (t || u || a) {
+        const na = (0.3*t) + (0.3*u) + (0.4*a);
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('preview-val').textContent = na.toFixed(1);
+        const el = document.getElementById('preview-status');
+        if (na >= 70) {
+            el.textContent = '✓ Lulus';
+            el.style.color = 'var(--green)';
+        } else {
+            el.textContent = '✕ Tidak Lulus';
+            el.style.color = 'var(--red)';
+        }
+    }
+}
+['nt','nuts','nuas'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updatePreview);
+});
+</script>
+{% endblock %}

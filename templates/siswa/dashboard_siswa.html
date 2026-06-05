@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Siswa{% endblock %}
+{% block page_title %}Nilai Saya{% endblock %}
+{% block page_sub %}Rekap nilai akademik Anda{% endblock %}
+
+{% block content %}
+
+{% if not stats.siswa %}
+{# Akun belum terhubung ke data siswa #}
+<div style="text-align:center; padding:64px 32px; color:var(--muted);">
+    <div style="font-size:52px; margin-bottom:16px;">⚠️</div>
+    <div style="font-size:18px; font-weight:600; color:var(--text); margin-bottom:8px;">Data siswa tidak ditemukan</div>
+    <p>Akun ini belum terhubung ke data siswa. Hubungi Admin untuk menambahkan data Anda.</p>
+</div>
+
+{% else %}
+
+{# Profil Siswa #}
+<div style="margin-bottom:20px; padding:20px 24px; background:var(--bg2); border:1px solid var(--border);
+            border-radius:12px; display:flex; align-items:center; gap:16px;">
+    <div style="width:56px; height:56px; border-radius:50%;
+                background:linear-gradient(135deg,var(--accent),var(--accent2));
+                display:flex; align-items:center; justify-content:center;
+                font-size:22px; font-weight:700; color:#fff; flex-shrink:0;">
+        {{ stats.siswa.nama_siswa[0] }}
+    </div>
+    <div>
+        <div style="font-size:18px; font-weight:600;">{{ stats.siswa.nama_siswa }}</div>
+        <div style="font-size:13px; color:var(--muted);">
+            NIS: {{ stats.siswa.nis }} &nbsp;·&nbsp; Kelas: {{ stats.siswa.kelas }}
+        </div>
+    </div>
+</div>
+
+{# Tabel Nilai #}
+{% if stats.nilai_list %}
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">📈 Rekap Nilai</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mata Pelajaran</th>
+                    <th>Tugas (30%)</th>
+                    <th>UTS (30%)</th>
+                    <th>UAS (40%)</th>
+                    <th>Nilai Akhir</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in stats.nilai_list %}
+                <tr>
+                    <td style="font-weight:600;">{{ n.nama_mapel }}</td>
+                    <td>{{ n.nilai_tugas }}</td>
+                    <td>{{ n.nilai_uts }}</td>
+                    <td>{{ n.nilai_uas }}</td>
+                    <td class="nilai-final">{{ "%.1f"|format(n.nilai_akhir) }}</td>
+                    <td>
+                        <span class="badge {% if n.status_lulus == 'Lulus' %}badge-green{% else %}badge-red{% endif %}">
+                            {{ n.status_lulus }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div style="text-align:center; padding:48px; color:var(--muted);">
+    <div style="font-size:48px; margin-bottom:12px;">📭</div>
+    <p>Belum ada nilai yang diinputkan untuk Anda.</p>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Mata Pelajaran{% endblock %}
+{% block page_title %}Mata Pelajaran{% endblock %}
+{% block page_sub %}Kelola daftar mata pelajaran{% endblock %}
+{% block topbar_actions %}
+    <a href="{{ url_for('tambah_mapel') }}" class="btn btn-primary">+ Tambah Mapel</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">Daftar Mata Pelajaran ({{ mapel_list|length }})</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>ID Mapel</th><th>Nama Mata Pelajaran</th><th>Aksi</th></tr>
+            </thead>
+            <tbody>
+                {% for m in mapel_list %}
+                <tr>
+                    <td><code style="color:var(--yellow);font-size:12px;">{{ m.id_mapel }}</code></td>
+                    <td style="font-weight:600;">{{ m.nama_mapel }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('hapus_mapel', id_mapel=m.id_mapel) }}"
+                              onsubmit="return confirm('Hapus mata pelajaran {{ m.nama_mapel }}?')">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑 Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" style="text-align:center;color:var(--muted);padding:32px;">Belum ada mata pelajaran.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

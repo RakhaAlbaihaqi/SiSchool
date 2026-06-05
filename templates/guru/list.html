@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Data Guru{% endblock %}
+{% block page_title %}Data Guru{% endblock %}
+{% block page_sub %}Kelola seluruh data guru{% endblock %}
+{% block topbar_actions %}
+<div style="display:flex;gap:10px;">
+  <button onclick="window.open('/export/guru','_blank')" class="btn btn-secondary">📄 Export PDF</button>
+  <a href="{{ url_for('tambah_guru') }}" class="btn btn-primary">+ Tambah Guru</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Daftar Guru ({{ guru_list|length }})</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID Guru</th>
+          <th>Nama Guru</th>
+          <th>Username</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in guru_list %}
+        <tr>
+          <td><code style="color:var(--accent2);font-size:12px;">{{ g.id_guru }}</code></td>
+          <td style="font-weight:600;">{{ g.nama_guru }}</td>
+          <td style="color:var(--muted);">{{ g.username }}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <a href="{{ url_for('ubah_guru', id_guru=g.id_guru) }}" class="btn btn-secondary btn-sm">✏️ Ubah</a>
+              <form method="POST" action="{{ url_for('hapus_guru', id_guru=g.id_guru) }}"
+                    onsubmit="return confirm('Hapus guru {{ g.nama_guru }}?')">
+                <button type="submit" class="btn btn-danger btn-sm">🗑 Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px;">Belum ada data guru.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
